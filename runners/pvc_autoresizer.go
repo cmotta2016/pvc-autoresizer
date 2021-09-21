@@ -208,6 +208,8 @@ func (w *pvcAutoresizer) resize(ctx context.Context, pvc *corev1.PersistentVolum
 			"to", newReq.Value(),
 			"threshold", threshold,
 			"available", vs.AvailableBytes,
+			"inodesThreshold", inodesThreshold,
+			"inodesAvailable", vs.AvailableInodeSize,
 		)
 		w.recorder.Eventf(pvc, corev1.EventTypeNormal, "Resized", "PVC volume is resized to %s", newReq.String())
 	}
