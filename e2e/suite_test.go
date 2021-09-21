@@ -290,18 +290,16 @@ var _ = Describe("pvc-autoresizer", func() {
 		resources = createPodPVC(resources, pvcName, sc, mode, pvcName, request, limit, threshold, inodesThreshold, increase, storageLimit)
 
 		By("getting available inode size and capacity inode size")
-		stdout, stderr, err := kubectl("-n", testNamespace, "exec", "-it", pvcName, "--", "df", "--output=target,itotal,iavail")
+		stdout, stderr, err := kubectl("-n", testNamespace, "exec", "-it", pvcName, "--", "df", "/test1", "--output=target,itotal,iavail")
 		Expect(err).ShouldNot(HaveOccurred(), "stdout=%s, stderr=%s", stdout, stderr)
-		for _, line := range regexp.MustCompile(`\n`).Split(string(stdout), -1) {
-			cs := regexp.MustCompile(`\s+`).Split(string(line), -1)
-			if len(cs) == 3 && cs[0] == "/test1" {
-				var err error
-				capacityInode, err = strconv.ParseInt(cs[1], 10, 64)
-				Expect(err).ShouldNot(HaveOccurred())
-				availableInode, err = strconv.ParseInt(cs[2], 10, 64)
-				Expect(err).ShouldNot(HaveOccurred())
-			}
-		}
+		lines := regexp.MustCompile(`\n`).Split(string(stdout), -1)
+		Expect(len(lines)).Should(Equal(3))
+
+		cs := regexp.MustCompile(`\s+`).Split(string(lines[1]), -1)
+		capacityInode, err = strconv.ParseInt(cs[1], 10, 64)
+		Expect(err).ShouldNot(HaveOccurred())
+		availableInode, err = strconv.ParseInt(cs[2], 10, 64)
+		Expect(err).ShouldNot(HaveOccurred())
 		Expect(capacityInode).ShouldNot(Equal(int64(0)))
 		Expect(availableInode).ShouldNot(Equal(int64(0)))
 
