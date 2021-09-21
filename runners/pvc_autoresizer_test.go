@@ -241,7 +241,7 @@ var _ = Describe("test resizer", func() {
 					availableByte:      5 << 30,
 					availableInodeSize: 0,
 					capacityInodeSize:  0,
-					inodesThreshold:    "0%",
+					inodesThreshold:    "20%",
 				},
 			}
 
