@@ -258,18 +258,8 @@ func convertSizeInBytes(valStr string, capacity int64, defaultVal string) (int64
 	if len(valStr) == 0 {
 		valStr = defaultVal
 	}
-
 	if strings.HasSuffix(valStr, "%") {
-		rate, err := strconv.ParseFloat(strings.TrimRight(valStr, "%"), 64)
-		if err != nil {
-			return 0, err
-		}
-		if rate < 0 {
-			return 0, fmt.Errorf("annotation value should be positive: %s", valStr)
-		}
-
-		res := int64(float64(capacity) * rate / 100.0)
-		return res, nil
+		return calcSize(valStr, capacity)
 	}
 
 	quantity, err := resource.ParseQuantity(valStr)
@@ -287,17 +277,19 @@ func convertSize(valStr string, capacity int64, defaultVal string) (int64, error
 	if len(valStr) == 0 {
 		valStr = defaultVal
 	}
-
-	if !strings.HasSuffix(valStr, "%") {
-		return 0, fmt.Errorf("annotation value should be in percent notation: %s", valStr)
+	if strings.HasSuffix(valStr, "%") {
+		return calcSize(valStr, capacity)
 	}
+	return 0, fmt.Errorf("annotation value should be in percent notation: %s", valStr)
+}
 
+func calcSize(valStr string, capacity int64) (int64, error) {
 	rate, err := strconv.ParseFloat(strings.TrimRight(valStr, "%"), 64)
 	if err != nil {
 		return 0, err
 	}
-	if rate < 0 {
-		return 0, fmt.Errorf("annotation value should be positive: %s", valStr)
+	if rate < 0 || rate > 100 {
+		return 0, fmt.Errorf("annotation value should between 0 and 100: %s", valStr)
 	}
 
 	res := int64(float64(capacity) * rate / 100.0)

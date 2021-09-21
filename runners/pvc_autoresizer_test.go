@@ -65,6 +65,11 @@ var _ = Describe("test resizer", func() {
 				defaultVal: "10%",
 			},
 			{
+				valStr:     "101%",
+				capacity:   100,
+				defaultVal: "10%",
+			},
+			{
 				valStr:     "-10Gi",
 				capacity:   100,
 				defaultVal: "10%",
@@ -126,6 +131,11 @@ var _ = Describe("test resizer", func() {
 			},
 			{
 				valStr:     "-10%",
+				capacity:   100,
+				defaultVal: "10%",
+			},
+			{
+				valStr:     "101%",
 				capacity:   100,
 				defaultVal: "10%",
 			},
